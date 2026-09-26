@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+    <string name="clear">Clear</string>
+    <string name="delete">Delete</string>
+    <string name="ok">OK</string>
+
+    <string name="error_network">The server could not be reached. Is there a connection?</string>
+    <string name="error_session_expired">You were signed out. Sign in again.</string>
+    <string name="error_bad_response">The server did not answer like CantoTrack. Is the address right?</string>
+    <string name="error_server">The server reported an error (%1$d).</string>
+
+    <string name="login_tagline">Your tickets and your hours, in your pocket.</string>
+    <string name="login_title">Sign in</string>
+    <string name="login_server">Server address</string>
+    <string name="login_email">Email address</string>
+    <string name="login_password">Password</string>
+    <string name="login_show_password">Show password</string>
+    <string name="login_hide_password">Hide password</string>
+    <string name="login_submit">Sign in</string>
+    <string name="login_server_invalid">That does not look like a server address.</string>
+    <string name="login_fields_required">Enter your email address and password.</string>
+    <string name="login_wrong_credentials">That email address and password do not match an account.</string>
+    <string name="login_code_lead">Two-step sign-in is on: enter the code from your authenticator app.</string>
+    <string name="login_code">Six-digit code</string>
+    <string name="login_recovery_code">Recovery code</string>
+    <string name="login_use_recovery_code">Use a recovery code</string>
+    <string name="login_use_app_code">Use the app\'s code after all</string>
+    <string name="login_code_required">Enter the code.</string>
+    <string name="login_code_wrong">That code is not right. Codes change every 30 seconds — try the one showing now.</string>
+
+    <string name="tab_tickets">Tickets</string>
+    <string name="tab_hours">My hours</string>
+
+    <string name="tickets_title">Tickets</string>
+    <string name="today_logged">Logged today: %1$s</string>
+    <string name="tickets_search">Search titles and keys…</string>
+    <string name="tickets_mine">Mine</string>
+    <string name="tickets_all_open">All open</string>
+    <string name="tickets_count">%1$d open tickets</string>
+    <string name="tickets_empty_title">No open tickets</string>
+    <string name="tickets_nothing_found">Nothing found</string>
+    <string name="tickets_empty_mine">Nothing open is assigned to you. “All open” shows everybody\'s.</string>
+    <string name="tickets_empty_all">No project you can see has an open ticket like that.</string>
+    <string name="ticket_logged">%1$s logged</string>
+    <string name="ticket_remaining">%1$s left</string>
+
+    <string name="ticket_open_on_web">Open on the web</string>
+    <string name="ticket_description">Description</string>
+    <string name="ticket_comments">Comments (%1$d)</string>
+    <string name="ticket_no_comments">No comments yet.</string>
+    <string name="ticket_comment_placeholder">Write a comment…</string>
+    <string name="ticket_comment_send">Send</string>
+    <string name="ticket_assignee">Assignee</string>
+    <string name="ticket_unassigned">Unassigned</string>
+    <string name="ticket_due">Due</string>
+    <string name="ticket_estimate">Estimate</string>
+    <string name="ticket_logged_label">Logged</string>
+    <string name="ticket_remaining_label">Left</string>
+    <string name="ticket_status_changed">Now %1$s</string>
+    <string name="priority_urgent">Urgent</string>
+    <string name="priority_high">High</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_low">Low</string>
+
+    <string name="clock_running">The clock is running</string>
+    <string name="timer_start">Start the clock</string>
+    <string name="timer_switch_here">Clock here</string>
+    <string name="timer_stop">Stop</string>
+    <string name="timer_stop_and_log">Stop and log</string>
+    <string name="timer_started">The clock runs on %1$s</string>
+    <string name="timer_switched">The clock that was running logged %1$s on %2$s; it runs here now.</string>
+    <string name="timer_logged">%1$s logged on %2$s</string>
+    <string name="timer_under_a_minute">Under a minute — nothing was logged.</string>
+    <string name="timer_discarded">The clock is stopped, and nothing was logged.</string>
+    <string name="timer_stop_title">Stop the clock on %1$s</string>
+    <string name="timer_stop_text">It has run %1$s. It becomes a worklog on the day it started.</string>
+    <string name="timer_discard_instead">Throw it away instead, without logging</string>
+    <string name="timer_discard_title">Throw the clock away?</string>
+    <string name="timer_discard_text">The %1$s it ran is not logged.</string>
+    <string name="timer_discard">Throw away</string>
+    <string name="timer_channel">Running clock</string>
+    <string name="timer_channel_description">While the clock runs it shows here, and can be stopped from here.</string>
+
+    <string name="worklog_title">Log time</string>
+    <string name="worklog_log">Log</string>
+    <string name="worklog_less">Less</string>
+    <string name="worklog_more">More</string>
+    <string name="worklog_today">Today</string>
+    <string name="worklog_yesterday">Yesterday</string>
+    <string name="worklog_other_day">Another day</string>
+    <string name="worklog_note">Note (optional)</string>
+    <string name="worklog_logged">%1$s logged on %2$s</string>
+
+    <string name="hours_title">My hours</string>
+    <string name="hours_previous">Previous week</string>
+    <string name="hours_next">Next week</string>
+    <string name="hours_this_week_total">this week</string>
+    <string name="hours_back_to_this_week">This week</string>
+    <string name="hours_today">Today</string>
+    <string name="hours_nothing_that_day">Nothing logged.</string>
+    <string name="hours_empty_title">No hours this week</string>
+    <string name="hours_empty_text">Add some on a ticket, with the clock or with “Log”.</string>
+    <string name="hours_hint">Tap an entry for its ticket; hold it to delete.</string>
+    <string name="hours_delete_title">Delete the entry?</string>
+    <string name="hours_delete_text">%1$s on %2$s.</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_server">Server</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_notifications_on">On: the running clock shows among the notifications</string>
+    <string name="settings_notifications_off">Off: the running clock shows only in the app</string>
+    <string name="settings_signed_in_here">This device</string>
+    <string name="settings_token_explained">Signing in shows on your profile\'s Access tokens with an App badge, and can be revoked there too. A new password or “Sign out everywhere else” signs this device out as well.</string>
+    <string name="settings_sign_out">Sign out</string>
+    <string name="settings_sign_out_title">Sign out?</string>
+    <string name="settings_sign_out_text">The token ends on this device and on the server. A running clock keeps running on the web.</string>
+    <string name="role_admin">Administrator</string>
+    <string name="role_member">Member</string>
+    <string name="role_guest">Guest</string>
+</resources>

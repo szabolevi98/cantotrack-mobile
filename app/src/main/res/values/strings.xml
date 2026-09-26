@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CantoTrack</string>
+
+    <string name="back">Vissza</string>
+    <string name="cancel">Mégse</string>
+    <string name="clear">Törlés</string>
+    <string name="delete">Törlés</string>
+    <string name="ok">OK</string>
+
+    <!-- As the web writes hours: 1h 30m. -->
+    <string name="duration_h">%1$dh</string>
+    <string name="duration_m">%1$dm</string>
+    <string name="duration_hm">%1$dh %2$dm</string>
+
+    <string name="error_network">Nem sikerült elérni a szervert. Van internet?</string>
+    <string name="error_session_expired">A bejelentkezésed lejárt. Lépj be újra.</string>
+    <string name="error_bad_response">A szerver nem CantoTrack-választ adott. Jó a cím?</string>
+    <string name="error_server">A szerver hibát jelzett (%1$d).</string>
+
+    <!-- Sign-in -->
+    <string name="login_tagline">A ticketjeid és az óráid, zsebben.</string>
+    <string name="login_title">Bejelentkezés</string>
+    <string name="login_server">Szerver címe</string>
+    <string name="login_email">E-mail cím</string>
+    <string name="login_password">Jelszó</string>
+    <string name="login_show_password">Jelszó mutatása</string>
+    <string name="login_hide_password">Jelszó elrejtése</string>
+    <string name="login_submit">Belépés</string>
+    <string name="login_server_invalid">Ez nem tűnik szervercímnek.</string>
+    <string name="login_fields_required">Add meg az e-mail címed és a jelszavad.</string>
+    <string name="login_wrong_credentials">Ez az e-mail cím és jelszó nem tartozik fiókhoz.</string>
+    <string name="login_code_lead">Kétlépcsős belépés van bekapcsolva: írd be a kódot a hitelesítő appodból.</string>
+    <string name="login_code">Hatjegyű kód</string>
+    <string name="login_recovery_code">Helyreállító kód</string>
+    <string name="login_use_recovery_code">Helyreállító kódot használok</string>
+    <string name="login_use_app_code">Mégis az app kódját írom be</string>
+    <string name="login_code_required">Írd be a kódot.</string>
+    <string name="login_code_wrong">Ez a kód nem jó. A kód 30 másodpercenként változik, az épp látszót írd be.</string>
+    <string name="login_footer">CantoTrack Mobile %1$s</string>
+
+    <!-- Tabs -->
+    <string name="tab_tickets">Ticketek</string>
+    <string name="tab_hours">Óráim</string>
+
+    <!-- Tickets -->
+    <string name="tickets_title">Ticketek</string>
+    <string name="today_logged">Ma rögzítve: %1$s</string>
+    <string name="tickets_search">Keresés címben, kulcsban…</string>
+    <string name="tickets_mine">Az enyéim</string>
+    <string name="tickets_all_open">Minden nyitott</string>
+    <string name="tickets_count">%1$d nyitott ticket</string>
+    <string name="tickets_empty_title">Nincs nyitott ticket</string>
+    <string name="tickets_nothing_found">Nincs találat</string>
+    <string name="tickets_empty_mine">Nincs rád osztott nyitott ticket. A „Minden nyitott” alatt a többieké is látszik.</string>
+    <string name="tickets_empty_all">Egyik látható projektben sincs ilyen nyitott ticket.</string>
+    <string name="ticket_logged">%1$s rögzítve</string>
+    <string name="ticket_remaining">%1$s van hátra</string>
+
+    <!-- A ticket -->
+    <string name="ticket_open_on_web">Megnyitás a weben</string>
+    <string name="ticket_description">Leírás</string>
+    <string name="ticket_comments">Kommentek (%1$d)</string>
+    <string name="ticket_no_comments">Még nincs komment.</string>
+    <string name="ticket_comment_placeholder">Komment írása…</string>
+    <string name="ticket_comment_send">Küldés</string>
+    <string name="ticket_assignee">Felelős</string>
+    <string name="ticket_unassigned">Nincs kiosztva</string>
+    <string name="ticket_due">Határidő</string>
+    <string name="ticket_estimate">Becslés</string>
+    <string name="ticket_logged_label">Rögzítve</string>
+    <string name="ticket_remaining_label">Hátra</string>
+    <string name="ticket_status_changed">Új státusz: %1$s</string>
+    <string name="priority_urgent">Sürgős</string>
+    <string name="priority_high">Magas</string>
+    <string name="priority_medium">Közepes</string>
+    <string name="priority_low">Alacsony</string>
+
+    <!-- The clock -->
+    <string name="clock_running">Fut az óra</string>
+    <string name="timer_start">Óra indítása</string>
+    <string name="timer_switch_here">Óra ide</string>
+    <string name="timer_stop">Leállítás</string>
+    <string name="timer_stop_and_log">Leállítás és rögzítés</string>
+    <string name="timer_started">Fut az óra: %1$s</string>
+    <string name="timer_switched">A korábbi óra leállt és rögzítve lett (%1$s, %2$s), most itt fut.</string>
+    <string name="timer_logged">%1$s rögzítve: %2$s</string>
+    <string name="timer_under_a_minute">Egy percnél rövidebb volt, nem lett rögzítve.</string>
+    <string name="timer_discarded">Az óra leállt, semmi nem lett rögzítve.</string>
+    <string name="timer_stop_title">Óra leállítása: %1$s</string>
+    <string name="timer_stop_text">%1$s ment eddig. Munkaidő-bejegyzés lesz belőle, a kezdés napjára.</string>
+    <string name="timer_discard_instead">Inkább eldobom, rögzítés nélkül</string>
+    <string name="timer_discard_title">Eldobod az órát?</string>
+    <string name="timer_discard_text">A %1$s nem kerül rögzítésre.</string>
+    <string name="timer_discard">Eldobás</string>
+    <string name="timer_channel">Futó óra</string>
+    <string name="timer_channel_description">Amíg fut az óra, itt látszik, és innen le is állítható.</string>
+
+    <!-- Logging time -->
+    <string name="worklog_title">Idő rögzítése</string>
+    <string name="worklog_log">Rögzítés</string>
+    <string name="worklog_less">Kevesebb</string>
+    <string name="worklog_more">Több</string>
+    <string name="worklog_today">Ma</string>
+    <string name="worklog_yesterday">Tegnap</string>
+    <string name="worklog_other_day">Másik nap</string>
+    <string name="worklog_note">Megjegyzés (nem kötelező)</string>
+    <string name="worklog_logged">%1$s rögzítve: %2$s</string>
+
+    <!-- Hours -->
+    <string name="hours_title">Óráim</string>
+    <string name="hours_week">%1$s – %2$s</string>
+    <string name="hours_previous">Előző hét</string>
+    <string name="hours_next">Következő hét</string>
+    <string name="hours_this_week_total">ezen a héten</string>
+    <string name="hours_back_to_this_week">Ez a hét</string>
+    <string name="hours_today">Ma</string>
+    <string name="hours_nothing_that_day">Nincs rögzítve.</string>
+    <string name="hours_empty_title">Ezen a héten nincs rögzített idő</string>
+    <string name="hours_empty_text">Egy ticketen az órával vagy a „Rögzítés” gombbal adhatsz hozzá.</string>
+    <string name="hours_hint">Koppints egy bejegyzésre a ticketjéért, tartsd nyomva a törléshez.</string>
+    <string name="hours_delete_title">Törlöd a bejegyzést?</string>
+    <string name="hours_delete_text">%1$s a(z) %2$s ticketen.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Beállítások</string>
+    <string name="settings_account">Fiók</string>
+    <string name="settings_server">Szerver</string>
+    <string name="settings_notifications">Értesítések</string>
+    <string name="settings_notifications_on">Bekapcsolva: a futó óra az értesítések között látszik</string>
+    <string name="settings_notifications_off">Kikapcsolva: a futó óra csak az appban látszik</string>
+    <string name="settings_signed_in_here">Ez az eszköz</string>
+    <string name="settings_token_explained">A belépés a profilod „Hozzáférési tokenek” listáján App jelzéssel látszik, és ott is visszavonható. Az új jelszó és a „Kijelentkezés mindenhol máshol” ezt az eszközt is kilépteti.</string>
+    <string name="settings_sign_out">Kijelentkezés</string>
+    <string name="settings_sign_out_title">Kijelentkezel?</string>
+    <string name="settings_sign_out_text">A token ezen az eszközön és a szerveren is megszűnik. A futó óra a weben tovább megy.</string>
+    <string name="settings_version">CantoTrack Mobile %1$s</string>
+    <string name="role_admin">Adminisztrátor</string>
+    <string name="role_member">Csapattag</string>
+    <string name="role_guest">Vendég</string>
+</resources>
