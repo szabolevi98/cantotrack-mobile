@@ -170,7 +170,8 @@ fun CtButton(
             content = content,
         )
     } else {
-        val onColor = if (CtTheme.colors.dark && color == CtTheme.colors.primary) Color(0xFF0B1628) else Color.White
+        // The dark theme's colours are light ones, which white text does not read on.
+        val onColor = if (CtTheme.colors.dark) Color(0xFF0B1628) else Color.White
         Button(
             onClick = onClick,
             enabled = enabled && !loading,
