@@ -6,7 +6,7 @@
     <string name="delete">Delete</string>
     <string name="ok">OK</string>
 
-    <string name="error_network">The server could not be reached. Is there a connection?</string>
+    <string name="error_network">The server could not be reached. Is there a connection? Trying again is safe: nothing is recorded twice.</string>
     <string name="error_session_expired">You were signed out. Sign in again.</string>
     <string name="error_bad_response">The server did not answer like CantoTrack. Is the address right?</string>
     <string name="error_server">The server reported an error (%1$d).</string>

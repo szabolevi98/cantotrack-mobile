@@ -21,17 +21,22 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okio.Buffer
 import java.io.IOException
 
 /** Where to send requests, and as whom. */
 data class Connection(val baseUrl: String, val token: String)
 
 /**
- * The CantoTrack JSON API, as far as the app needs it (the API section of
- * cantotrack's README). Every call runs on the IO dispatcher and throws
+ * The CantoTrack JSON API, as far as the app needs it (docs/API.md in the
+ * cantotrack repository). Every call runs on the IO dispatcher and throws
  * [ApiException] on failure.
  */
-class ApiClient(private val http: OkHttpClient, private val json: Json) {
+class ApiClient(
+    private val http: OkHttpClient,
+    private val json: Json,
+    private val resendKeys: ResendKeys = ResendKeys(),
+) {
 
     // -----------------------------------------------------------------
     // Signing in and out
@@ -186,10 +191,20 @@ class ApiClient(private val http: OkHttpClient, private val json: Json) {
         }
     }
 
-    /** Sends the request and returns the body of a successful answer, which may be empty (204). */
+    /**
+     * Sends the request and returns the body of a successful answer, which may be empty (204).
+     *
+     * A change — anything but a GET, and but signing in and out — carries an
+     * Idempotency-Key (see [ResendKeys]), so that sending it again after a lost
+     * connection is safe.
+     */
     private suspend fun send(request: Request, unauthorizedIsHttp: Boolean = false): String = withContext(Dispatchers.IO) {
+        val fingerprint = if (request.method != "GET" && !request.url.encodedPath.contains("/api/v1/auth/")) fingerprintOf(request) else null
+        val sent = request.newBuilder().header("Accept", "application/json")
+        if (fingerprint != null) sent.header("Idempotency-Key", resendKeys.keyFor(fingerprint))
+
         val response = try {
-            http.newCall(request.newBuilder().header("Accept", "application/json").build()).execute()
+            http.newCall(sent.build()).execute()
         } catch (e: IOException) {
             throw ApiException.Network(e)
         }
@@ -201,6 +216,9 @@ class ApiClient(private val http: OkHttpClient, private val json: Json) {
                 throw ApiException.Network(e)
             }
 
+            // Answered: the key is done with — unless the first sending is still being worked on.
+            if (fingerprint != null && it.code != 409) resendKeys.answered(fingerprint)
+
             if (!it.isSuccessful) {
                 val error = parseError(text) ?: throw ApiException.BadResponse("HTTP ${it.code}")
                 if (it.code == 401 && !unauthorizedIsHttp) {
@@ -210,6 +228,13 @@ class ApiClient(private val http: OkHttpClient, private val json: Json) {
             }
             text
         }
+    }
+
+    /** What makes two sendings the same change: the method, the address and the body. */
+    private fun fingerprintOf(request: Request): String {
+        val body = Buffer()
+        request.body?.writeTo(body)
+        return request.method + " " + request.url + "\n" + body.readUtf8()
     }
 
     /** {"error": {"status", "message", "details"?}} as (status, message, details), or null. */

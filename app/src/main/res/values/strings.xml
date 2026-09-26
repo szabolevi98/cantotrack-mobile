@@ -13,7 +13,7 @@
     <string name="duration_m">%1$dm</string>
     <string name="duration_hm">%1$dh %2$dm</string>
 
-    <string name="error_network">Nem sikerült elérni a szervert. Van internet?</string>
+    <string name="error_network">Nem sikerült elérni a szervert. Van internet? Nyugodtan próbáld újra: semmi sem kerül be kétszer.</string>
     <string name="error_session_expired">A bejelentkezésed lejárt. Lépj be újra.</string>
     <string name="error_bad_response">A szerver nem CantoTrack-választ adott. Jó a cím?</string>
     <string name="error_server">A szerver hibát jelzett (%1$d).</string>

@@ -193,6 +193,55 @@ class ApiClientTest {
     }
 
     @Test
+    fun `a change sent again after a lost answer carries the same key, and a new change a new one`() = runTest {
+        val entry = """{"data":{"id":42,"ticket":"CT-12","user":{"id":7,"name":"Anna"},"date":"2026-09-10","minutes":45}}"""
+        // The first answer comes too late: the phone gives up, but the server may have logged it.
+        server.enqueue(MockResponse.Builder().code(201).body(entry).headersDelay(3, TimeUnit.SECONDS).build())
+        respond(201, entry)
+        respond(201, entry)
+
+        try {
+            api.logWork(connection, "CT-12", "45m", "2026-09-10", "")
+            fail("Expected the answer to be lost")
+        } catch (e: ApiException.Network) {
+            // The person taps again.
+        }
+        api.logWork(connection, "CT-12", "45m", "2026-09-10", "")
+        // Answered, so logging 45 minutes again is meant: a new change.
+        api.logWork(connection, "CT-12", "45m", "2026-09-10", "")
+
+        val first = server.takeRequest().headers["Idempotency-Key"]
+        val resent = server.takeRequest().headers["Idempotency-Key"]
+        val another = server.takeRequest().headers["Idempotency-Key"]
+        assertTrue(!first.isNullOrBlank())
+        assertEquals(first, resent)
+        assertTrue(another != first)
+    }
+
+    @Test
+    fun `reading and signing in carry no key`() = runTest {
+        respond(200, """{"data":null}""")
+        respond(201, """{"data":{"token":"ct_abc","user":{"id":7,"name":"Anna","email":"a@b","role":"member"}}}""")
+
+        api.timer(connection)
+        api.login(baseUrl, "a@b", "secret", "Pixel 8")
+
+        assertNull(server.takeRequest().headers["Idempotency-Key"])
+        assertNull(server.takeRequest().headers["Idempotency-Key"])
+    }
+
+    @Test
+    fun `a key held longer than half a day is not reused`() {
+        var time = 0L
+        val keys = ResendKeys { time }
+
+        val first = keys.keyFor("POST /x\n{}")
+        time += ResendKeys.KEEP_MILLIS + 1
+
+        assertTrue(keys.keyFor("POST /x\n{}") != first)
+    }
+
+    @Test
     fun `server addresses are tidied the way people type them`() {
         assertEquals("https://tracker.example.com", ApiClient.normalizeBaseUrl("tracker.example.com/"))
         assertEquals("https://tracker.example.com", ApiClient.normalizeBaseUrl("https://tracker.example.com/api/v1"))

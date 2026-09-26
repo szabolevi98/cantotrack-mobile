@@ -66,6 +66,16 @@ counter in the shade is the notification's own.
   web.
 - **Today's total** is in the header of the tickets tab.
 
+### A bad connection
+
+On a train the answer to "log 45 minutes" can be lost after the server has
+already logged them. The app then says it could not reach the server — and
+tapping again is safe: every change (logging and correcting hours, a comment,
+a status, the clock) goes with an `Idempotency-Key`, the same one when the same
+change is sent again, and CantoTrack answers a resend with its first answer
+instead of doing it twice. Once the server has answered, the key is done with,
+so logging the same time again on purpose logs it again.
+
 ### Security
 
 - Everybody signs in with **their own CantoTrack account**: email address and
@@ -117,7 +127,9 @@ It needs **Android 8.0 (API 26)** or later, and a CantoTrack server with the
 app's endpoints (`/api/v1/auth/login`, `/api/v1/auth/logout`, `/api/v1/timer`) —
 any version from 26 September 2026 on, with `php database/migrate.php` run.
 Correcting an entry (from 1.1) needs `PATCH /api/v1/worklogs/{id}` as well, which
-CantoTrack has had since the evening of the same day.
+CantoTrack has had since the evening of the same day. Resending safely (from
+1.2) needs a CantoTrack that knows `Idempotency-Key`, from the night of the same
+day; an older one ignores the header, and the app works as before.
 
 ## Building it
 
@@ -164,8 +176,9 @@ app/src/test/          unit tests
 app/src/androidTest/   tests on a device or emulator
 ```
 
-The API is described in the CantoTrack repository's README, under
-[The API](https://github.com/szabolevi98/cantotrack#the-api).
+The API is described in the CantoTrack repository, in
+[docs/API.md](https://github.com/szabolevi98/cantotrack/blob/main/docs/API.md) — and
+inside CantoTrack itself, under **API documentation** in the account menu.
 
 ## License
 
