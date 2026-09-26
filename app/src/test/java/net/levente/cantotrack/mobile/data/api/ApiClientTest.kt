@@ -140,6 +140,33 @@ class ApiClientTest {
     }
 
     @Test
+    fun `searching every ticket leaves out the open filter`() = runTest {
+        respond(200, """{"data":[],"meta":{"page":1,"per_page":50,"total":0,"pages":1}}""")
+
+        api.tickets(connection, "board", mineOnly = false, openOnly = false)
+
+        val url = server.takeRequest().url
+        assertNull(url.queryParameter("open"))
+        assertNull(url.queryParameter("assignee"))
+    }
+
+    @Test
+    fun `an entry is changed with a PATCH of its time, day and note`() = runTest {
+        respond(200, """{"data":{"id":42,"ticket":"CT-12","user":{"id":7,"name":"Anna"},"date":"2026-09-10","minutes":90,"note":"Fixed"}}""")
+
+        val entry = api.updateWorklog(connection, 42, "1h 30m", "2026-09-10", " Fixed ")
+
+        assertEquals(90, entry.minutes)
+        val request = server.takeRequest()
+        assertEquals("PATCH", request.method)
+        assertEquals("/cantotrack/web/api/v1/worklogs/42", request.url.encodedPath)
+        val body = request.body!!.utf8()
+        assertTrue(body.contains("\"time\":\"1h 30m\""))
+        assertTrue(body.contains("\"date\":\"2026-09-10\""))
+        assertTrue(body.contains("\"note\":\"Fixed\""))
+    }
+
+    @Test
     fun `no clock is null, and a running one says how long it has run`() = runTest {
         respond(200, """{"data":null}""")
         respond(200, """{"data":{"ticket":"CT-1","title":"Board","started_at":"2026-09-26T13:38:27+02:00","seconds":95}}""")

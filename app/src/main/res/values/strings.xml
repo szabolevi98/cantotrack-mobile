@@ -106,6 +106,15 @@
     <string name="worklog_other_day">Másik nap</string>
     <string name="worklog_note">Megjegyzés (nem kötelező)</string>
     <string name="worklog_logged">%1$s rögzítve: %2$s</string>
+    <string name="worklog_changed">Módosítva: %1$s, %2$s</string>
+    <string name="worklog_edit_title">Bejegyzés: %1$s</string>
+    <string name="worklog_open_ticket">Ticket</string>
+    <string name="worklog_ticket_search">Ticket keresése</string>
+    <string name="worklog_ticket_mine">A rád osztott nyitott ticketek; gépelj a többihez.</string>
+    <string name="worklog_ticket_found">Minden ticket, a lezártak is.</string>
+    <string name="worklog_other_ticket">Másik ticket</string>
+    <string name="save">Mentés</string>
+    <string name="hours_add_on_day">Idő rögzítése erre a napra</string>
 
     <!-- Hours -->
     <string name="hours_title">Óráim</string>
@@ -117,8 +126,8 @@
     <string name="hours_today">Ma</string>
     <string name="hours_nothing_that_day">Nincs rögzítve.</string>
     <string name="hours_empty_title">Ezen a héten nincs rögzített idő</string>
-    <string name="hours_empty_text">Egy ticketen az órával vagy a „Rögzítés” gombbal adhatsz hozzá.</string>
-    <string name="hours_hint">Koppints egy bejegyzésre a ticketjéért, tartsd nyomva a törléshez.</string>
+    <string name="hours_empty_text">Az „Idő rögzítése” gombbal, vagy egy ticketen az órával adhatsz hozzá.</string>
+    <string name="hours_hint">Koppints egy bejegyzésre a módosításhoz vagy törléshez, a hét dátumára egy régebbi hétért.</string>
     <string name="hours_delete_title">Törlöd a bejegyzést?</string>
     <string name="hours_delete_text">%1$s a(z) %2$s ticketen.</string>
 

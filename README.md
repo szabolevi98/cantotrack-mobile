@@ -53,11 +53,17 @@ counter in the shade is the notification's own.
 ### Hours
 
 - **Log time by hand**: how long (in quarter hours, or 15 minutes to 2 hours with
-  one tap), which day (today, yesterday or any earlier day) and a note.
+  one tap), which day (today, yesterday or any earlier day) and a note — on a
+  ticket's page, or from the hours tab on any ticket, picked with a search (your
+  own open tickets first; typing finds every ticket, closed ones too).
 - **The week**: the second tab is your hours a week at a time, day by day with a
   total for each day and the week, and weekdays without hours shown as empty.
-  Step back through earlier weeks. A tap on an entry opens its ticket; holding it
-  deletes it.
+  Step a week back or forward, or tap the week's dates for a calendar and jump
+  to any week. Each day has a **+** that logs on that day.
+- **Correcting an entry**: a tap on an entry opens it with its time, day and
+  note, to change or delete, or to open its ticket. A day that is closed, handed
+  in or approved, and hours already billed, are refused by the server, as on the
+  web.
 - **Today's total** is in the header of the tickets tab.
 
 ### Security
@@ -89,9 +95,13 @@ error messages come in the language set on your CantoTrack profile.
 |---|---|---|
 | ![Sign-in](docs/screenshots/login.png) | ![Tickets](docs/screenshots/tickets.png) | ![A ticket](docs/screenshots/ticket.png) |
 
-| The week's hours | Dark |
-|---|---|
-| ![Hours](docs/screenshots/hours.png) | ![Dark](docs/screenshots/dark.png) |
+| The week's hours | Logging time on any ticket | Correcting an entry |
+|---|---|---|
+| ![Hours](docs/screenshots/hours.png) | ![Logging time](docs/screenshots/log-time.png) | ![Correcting an entry](docs/screenshots/edit-entry.png) |
+
+| Dark |
+|---|
+| ![Dark](docs/screenshots/dark.png) |
 
 ## Installing it
 
@@ -106,6 +116,8 @@ error messages come in the language set on your CantoTrack profile.
 It needs **Android 8.0 (API 26)** or later, and a CantoTrack server with the
 app's endpoints (`/api/v1/auth/login`, `/api/v1/auth/logout`, `/api/v1/timer`) —
 any version from 26 September 2026 on, with `php database/migrate.php` run.
+Correcting an entry (from 1.1) needs `PATCH /api/v1/worklogs/{id}` as well, which
+CantoTrack has had since the evening of the same day.
 
 ## Building it
 

@@ -76,6 +76,7 @@ import net.levente.cantotrack.mobile.ui.components.PriorityIcon
 import net.levente.cantotrack.mobile.ui.components.SectionLabel
 import net.levente.cantotrack.mobile.ui.components.StatusChip
 import net.levente.cantotrack.mobile.ui.components.TypeIcon
+import net.levente.cantotrack.mobile.ui.components.WorklogDialog
 import net.levente.cantotrack.mobile.ui.components.rememberNotificationPermission
 import net.levente.cantotrack.mobile.ui.dateTimeText
 import net.levente.cantotrack.mobile.ui.minutesText
@@ -193,9 +194,11 @@ fun TicketScreen(
     }
 
     if (logging) {
-        LogWorkDialog(
+        WorklogDialog(
+            title = stringResource(R.string.worklog_title),
+            confirmLabel = stringResource(R.string.worklog_log),
             busy = state.logging,
-            onLog = { minutes, date, note -> viewModel.logWork(minutes, date, note) { if (it) logging = false } },
+            onConfirm = { minutes, date, note -> viewModel.logWork(minutes, date, note) { if (it) logging = false } },
             onDismiss = { logging = false },
         )
     }

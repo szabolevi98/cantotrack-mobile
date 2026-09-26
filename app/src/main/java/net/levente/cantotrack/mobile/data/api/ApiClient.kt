@@ -62,10 +62,13 @@ class ApiClient(private val http: OkHttpClient, private val json: Json) {
     // Tickets
     // -----------------------------------------------------------------
 
-    /** Open tickets, newest change first: the person's own, or everybody's with [mineOnly] off. */
-    suspend fun tickets(connection: Connection, search: String, mineOnly: Boolean, page: Int = 1): Page<Ticket> {
+    /**
+     * Tickets, newest change first: the person's own, or everybody's with
+     * [mineOnly] off; only the open ones unless [openOnly] is off.
+     */
+    suspend fun tickets(connection: Connection, search: String, mineOnly: Boolean, page: Int = 1, openOnly: Boolean = true): Page<Ticket> {
         val query = buildMap {
-            put("open", "1")
+            if (openOnly) put("open", "1")
             if (mineOnly) put("assignee", "me")
             if (search.isNotBlank()) put("q", search.trim())
             put("page", "$page")
@@ -122,6 +125,17 @@ class ApiClient(private val http: OkHttpClient, private val json: Json) {
     /** The person's own hours from [from] to [to], both 2026-09-22. */
     suspend fun worklogs(connection: Connection, from: String, to: String): List<Worklog> =
         get(connection, "worklogs", mapOf("from" to from, "to" to to), Envelope.serializer(ListSerializer(Worklog.serializer()))).data
+
+    /** Changes an entry of one's own; the start, billing and work type stay as they were. */
+    suspend fun updateWorklog(connection: Connection, id: Int, time: String, date: String, note: String): Worklog {
+        val body = buildJsonObject {
+            put("time", time)
+            put("date", date)
+            put("note", note.trim())
+        }
+        val request = authorized(connection, "worklogs/$id", emptyMap()).patch(body.toBody()).build()
+        return execute(request, Envelope.serializer(Worklog.serializer())).data
+    }
 
     suspend fun deleteWorklog(connection: Connection, id: Int) {
         send(authorized(connection, "worklogs/$id", emptyMap()).delete().build())

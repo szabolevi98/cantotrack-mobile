@@ -176,10 +176,12 @@ private fun SignedIn(container: AppContainer, session: Session, openTicket: Muta
                 LaunchedEffect(logged) { if (logged > 0) viewModel.refresh() }
                 HoursScreen(
                     viewModel = viewModel,
+                    user = session.user,
                     clock = clock,
                     snackbar = snackbar,
                     onTicket = { nav.navigate(Routes.ticket(it)) },
                     onStopClock = { stopping = true },
+                    onLogged = { logged++ },
                 )
             }
             composable(Routes.TICKET, arguments = listOf(navArgument("key") { type = NavType.StringType })) { backStack ->

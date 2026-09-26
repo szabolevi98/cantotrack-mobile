@@ -92,6 +92,15 @@
     <string name="worklog_other_day">Another day</string>
     <string name="worklog_note">Note (optional)</string>
     <string name="worklog_logged">%1$s logged on %2$s</string>
+    <string name="worklog_changed">Changed: %1$s on %2$s</string>
+    <string name="worklog_edit_title">Entry on %1$s</string>
+    <string name="worklog_open_ticket">Ticket</string>
+    <string name="worklog_ticket_search">Find a ticket</string>
+    <string name="worklog_ticket_mine">Your open tickets; type for the others.</string>
+    <string name="worklog_ticket_found">Every ticket, closed ones too.</string>
+    <string name="worklog_other_ticket">Another ticket</string>
+    <string name="save">Save</string>
+    <string name="hours_add_on_day">Log time on this day</string>
 
     <string name="hours_title">My hours</string>
     <string name="hours_previous">Previous week</string>
@@ -101,8 +110,8 @@
     <string name="hours_today">Today</string>
     <string name="hours_nothing_that_day">Nothing logged.</string>
     <string name="hours_empty_title">No hours this week</string>
-    <string name="hours_empty_text">Add some on a ticket, with the clock or with “Log”.</string>
-    <string name="hours_hint">Tap an entry for its ticket; hold it to delete.</string>
+    <string name="hours_empty_text">Add some with “Log time”, or with the clock on a ticket.</string>
+    <string name="hours_hint">Tap an entry to change or delete it, and the dates of the week for one further back.</string>
     <string name="hours_delete_title">Delete the entry?</string>
     <string name="hours_delete_text">%1$s on %2$s.</string>
 
