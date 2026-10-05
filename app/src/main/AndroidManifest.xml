@@ -48,7 +48,7 @@
                 android:resource="@xml/widget_clock_info" />
         </receiver>
 
-        <!-- The clock in the quick settings; drawn when the app asks, not polled. -->
+        <!-- The clock in the quick settings, drawn each time they are pulled down. -->
         <service
             android:name=".data.timer.ClockTileService"
             android:exported="true"
@@ -58,9 +58,6 @@
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
-            <meta-data
-                android:name="android.service.quicksettings.ACTIVE_TILE"
-                android:value="true" />
         </service>
 
         <!-- Photos taken for a ticket, and files of a ticket opened in another app. -->

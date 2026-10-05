@@ -40,9 +40,17 @@ class ClockTileService : TileService() {
         super.onDestroy()
     }
 
+    /**
+     * The shade was pulled down: drawn at once from what the app knows, and
+     * read from the server again — at most once a minute, as the shade is
+     * pulled down far more often than the clock changes.
+     */
     override fun onStartListening() {
         super.onStartListening()
         draw()
+        val now = System.currentTimeMillis()
+        if (now - lastRefresh < 60_000) return
+        lastRefresh = now
         scope.launch {
             withContext(Dispatchers.IO) { BackgroundClock.refresh(container) }
             draw()
@@ -99,7 +107,9 @@ class ClockTileService : TileService() {
     }
 
     companion object {
-        /** The clock changed: the tile asks to be drawn again. */
+        private var lastRefresh = 0L
+
+        /** The clock changed: the tile asks to be drawn again, if the shade is open. */
         fun refresh(context: Context) {
             runCatching { requestListeningState(context, ComponentName(context, ClockTileService::class.java)) }
         }

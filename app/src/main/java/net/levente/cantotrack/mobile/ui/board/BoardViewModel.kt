@@ -86,8 +86,9 @@ class BoardViewModel(private val container: AppContainer) : ViewModel() {
     }
 
     /**
-     * Before one was ever picked: the board my open tickets are on the most
-     * of — a project's own before a shared one, as the list has them.
+     * Before one was ever picked: the own board of the project most of my
+     * open tickets are in. A shared board is often a kanban without sprints,
+     * so it is only the choice when there is no other.
      */
     private suspend fun likeliest(boards: List<Board>): Board? {
         if (boards.size < 2) return boards.firstOrNull()
@@ -96,7 +97,8 @@ class BoardViewModel(private val container: AppContainer) : ViewModel() {
         } catch (e: ApiException.Http) {
             emptyMap()
         }
-        return boards.maxByOrNull { board -> board.projects.sumOf { mine[it] ?: 0 } } ?: boards.first()
+        val own = boards.filter { !it.shared }.ifEmpty { boards }
+        return own.maxByOrNull { board -> board.projects.sumOf { mine[it] ?: 0 } } ?: boards.first()
     }
 
     fun selectBoard(id: Int) {
