@@ -30,11 +30,17 @@ data class RunningClock(val ticket: String, val title: String, val sinceElapsed:
 }
 
 /**
- * The one running clock, shared by every screen and the notification. The
- * server's is the real one — the web can start and stop it too — so this is
- * read again whenever the app comes back to the front.
+ * The one running clock, shared by every screen, the notification, the
+ * widget and the quick settings tile. The server's is the real one — the web
+ * can start and stop it too — so this is read again whenever the app comes
+ * back to the front.
  */
-class TimerTracker(private val api: ApiClient, private val notifier: TimerNotifier) {
+class TimerTracker(
+    private val api: ApiClient,
+    private val notifier: TimerNotifier,
+    /** Told of every change: the widget and the tile follow the clock. */
+    private val onChange: (RunningClock?) -> Unit = {},
+) {
     private val _clock = MutableStateFlow<RunningClock?>(null)
     val clock: StateFlow<RunningClock?> = _clock.asStateFlow()
 
@@ -69,5 +75,6 @@ class TimerTracker(private val api: ApiClient, private val notifier: TimerNotifi
     private fun set(clock: RunningClock?) {
         _clock.value = clock
         if (clock == null) notifier.hide() else notifier.show(clock)
+        onChange(clock)
     }
 }

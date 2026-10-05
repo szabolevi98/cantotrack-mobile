@@ -34,6 +34,8 @@ import androidx.compose.material.icons.rounded.Bolt
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -95,6 +97,32 @@ fun CtHeader(
         }
         Column(Modifier.padding(start = if (onBack != null) 16.dp else 0.dp, end = 12.dp), content = content)
     }
+}
+
+/** A filter in the dark header: outlined while off, filled while on. */
+@Composable
+fun HeaderToggle(text: String, selected: Boolean, icon: ImageVector? = null, onClick: () -> Unit) {
+    val colors = CtTheme.colors
+    FilterChip(
+        selected = selected,
+        onClick = onClick,
+        label = { Text(text, maxLines = 1) },
+        leadingIcon = icon?.let { { Icon(it, contentDescription = null, modifier = Modifier.size(18.dp)) } },
+        colors = FilterChipDefaults.filterChipColors(
+            containerColor = Color.Transparent,
+            labelColor = colors.sidebarText,
+            iconColor = colors.sidebarText,
+            selectedContainerColor = Color.White.copy(alpha = 0.18f),
+            selectedLabelColor = Color.White,
+            selectedLeadingIconColor = Color.White,
+        ),
+        border = FilterChipDefaults.filterChipBorder(
+            enabled = true,
+            selected = selected,
+            borderColor = Color.White.copy(alpha = 0.25f),
+            selectedBorderColor = Color.Transparent,
+        ),
+    )
 }
 
 /** A card with the web app's soft border and shadow. */

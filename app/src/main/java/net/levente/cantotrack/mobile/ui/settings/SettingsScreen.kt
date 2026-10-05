@@ -20,7 +20,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.rounded.Dns
 import androidx.compose.material.icons.rounded.Notifications
+import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.NotificationsOff
+import androidx.compose.material3.Switch
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -48,14 +50,22 @@ import net.levente.cantotrack.mobile.ui.components.CtButton
 import net.levente.cantotrack.mobile.ui.components.CtCard
 import net.levente.cantotrack.mobile.ui.components.CtHeader
 import net.levente.cantotrack.mobile.ui.components.SectionLabel
+import net.levente.cantotrack.mobile.ui.components.rememberNotificationPermission
 import net.levente.cantotrack.mobile.ui.theme.CtTheme
 
 @Composable
-fun SettingsScreen(session: Session, onSignOut: () -> Unit, onBack: () -> Unit) {
+fun SettingsScreen(
+    session: Session,
+    newsAlerts: Boolean,
+    onNewsAlerts: (Boolean) -> Unit,
+    onSignOut: () -> Unit,
+    onBack: () -> Unit,
+) {
     val colors = CtTheme.colors
     val context = LocalContext.current
     var confirming by remember { mutableStateOf(false) }
     val notifications = NotificationManagerCompat.from(context).areNotificationsEnabled()
+    val askForNotifications = rememberNotificationPermission()
     val user = session.user
 
     Column(Modifier.fillMaxSize()) {
@@ -93,6 +103,23 @@ fun SettingsScreen(session: Session, onSignOut: () -> Unit, onBack: () -> Unit) 
                         context.startActivity(intent)
                     },
                 )
+                HorizontalDivider(color = colors.border)
+                Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Rounded.NotificationsActive, contentDescription = null, tint = colors.primary)
+                    Spacer(Modifier.width(12.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(stringResource(R.string.settings_news), style = MaterialTheme.typography.bodyLarge)
+                        Text(stringResource(R.string.settings_news_text), style = MaterialTheme.typography.bodyMedium, color = colors.muted)
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Switch(checked = newsAlerts, onCheckedChange = { on -> if (on) askForNotifications(); onNewsAlerts(on) })
+                }
+            }
+
+            CtCard(Modifier.fillMaxWidth()) {
+                SectionLabel(stringResource(R.string.settings_shortcuts))
+                Spacer(Modifier.height(8.dp))
+                Text(stringResource(R.string.settings_shortcuts_text), style = MaterialTheme.typography.bodyMedium, color = colors.muted)
             }
 
             CtCard(Modifier.fillMaxWidth()) {

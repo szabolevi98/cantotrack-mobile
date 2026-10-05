@@ -2,6 +2,7 @@ package net.levente.cantotrack.mobile.data.api
 
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.put
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import okhttp3.OkHttpClient
@@ -239,6 +240,119 @@ class ApiClientTest {
         time += ResendKeys.KEEP_MILLIS + 1
 
         assertTrue(keys.keyFor("POST /x\n{}") != first)
+    }
+
+    @Test
+    fun `the quick filters become the server's own parameters`() = runTest {
+        respond(200, """{"data":[],"meta":{"page":1,"per_page":100,"total":0,"pages":1}}""")
+
+        api.tickets(
+            connection,
+            TicketFilter(due = "overdue", type = "bug", project = "CT", query = "priority = high", sprint = 12, topLevel = true),
+            page = 2,
+            perPage = 100,
+        )
+
+        val url = server.takeRequest().url
+        assertEquals("overdue", url.queryParameter("due"))
+        assertEquals("bug", url.queryParameter("type"))
+        assertEquals("CT", url.queryParameter("project"))
+        assertEquals("priority = high", url.queryParameter("query"))
+        assertEquals("12", url.queryParameter("sprint"))
+        assertEquals("1", url.queryParameter("top_level"))
+        assertEquals("1", url.queryParameter("open"))
+        assertNull("Not mine only unless asked.", url.queryParameter("assignee"))
+        assertEquals("2", url.queryParameter("page"))
+        assertEquals("100", url.queryParameter("per_page"))
+    }
+
+    @Test
+    fun `a change to a ticket sends only its fields and the version read`() = runTest {
+        respond(200, """{"data":{"key":"CT-4","project":"CT","title":"Board","status":{"id":1,"name":"To do","category":"todo"},"version":8,"starred":true,"watching":false}}""")
+
+        val ticket = api.updateTicket(connection, "CT-4", kotlinx.serialization.json.buildJsonObject { put("assignee_id", null as Int?) }, 7)
+
+        assertEquals(8, ticket.version)
+        assertEquals(true, ticket.starred)
+        val body = server.takeRequest().body!!.utf8()
+        assertEquals("""{"assignee_id":null,"version":7}""", body)
+    }
+
+    @Test
+    fun `starring is a POST and taking the star off a DELETE`() = runTest {
+        respond(204)
+        respond(204)
+
+        api.star(connection, "CT-4", true)
+        api.star(connection, "CT-4", false)
+
+        val starred = server.takeRequest()
+        assertEquals("POST", starred.method)
+        assertEquals("/cantotrack/web/api/v1/tickets/CT-4/star", starred.url.encodedPath)
+        assertEquals("DELETE", server.takeRequest().method)
+    }
+
+    @Test
+    fun `the same photo sent again after a lost answer is the same request`() = runTest {
+        val uploaded = """{"data":[{"id":5,"name":"a.jpg","type":"image/jpeg","size":3}],"errors":[]}"""
+        server.enqueue(MockResponse.Builder().code(201).body(uploaded).headersDelay(3, TimeUnit.SECONDS).build())
+        respond(201, uploaded)
+        val photo = byteArrayOf(1, 2, 3)
+
+        try {
+            api.upload(connection, "CT-4", "a.jpg", "image/jpeg", photo)
+            fail("Expected the answer to be lost")
+        } catch (e: ApiException.Network) {
+            // The person taps again.
+        }
+        val result = api.upload(connection, "CT-4", "a.jpg", "image/jpeg", photo)
+
+        assertEquals("a.jpg", result.data.single().name)
+        val first = server.takeRequest()
+        val again = server.takeRequest()
+        assertEquals(first.headers["Idempotency-Key"], again.headers["Idempotency-Key"])
+        assertEquals(first.headers["Content-Type"], again.headers["Content-Type"])
+        assertTrue(first.headers["Content-Type"]!!.startsWith("multipart/form-data"))
+    }
+
+    @Test
+    fun `the week reads each day against what it asks for, and where it stands`() = runTest {
+        respond(
+            200,
+            """{"data":{"monday":"2026-09-21","sunday":"2026-09-27","user":{"id":3,"name":"Anna"},
+               "days":[{"date":"2026-09-21","expected_minutes":480,"logged_minutes":465,"holiday":null,"absence":null},
+                       {"date":"2026-09-25","expected_minutes":0,"logged_minutes":0,"holiday":null,"absence":"vacation"}],
+               "logged_minutes":465,"expected_minutes":1920,"expected_to_date_minutes":1920,
+               "state":{"state":"rejected","comment":"Friday is missing.","reviewer":{"id":1,"name":"Levente"}},
+               "can_submit":true,"locked_until":null,"absences":[{"id":9,"starts_on":"2026-09-25","ends_on":"2026-09-25","kind":"vacation"}]}}""",
+        )
+
+        val week = api.week(connection, "2026-09-23")
+
+        assertEquals("2026-09-23", server.takeRequest().url.queryParameter("week"))
+        assertEquals(1920, week.expectedMinutes)
+        assertEquals("vacation", week.days[1].absence)
+        assertEquals("rejected", week.state!!.state)
+        assertEquals("Friday is missing.", week.state!!.comment)
+        assertTrue(week.canSubmit)
+        assertEquals(9, week.absences.single().id)
+    }
+
+    @Test
+    fun `the bell says how many are unread`() = runTest {
+        respond(
+            200,
+            """{"data":[{"id":130,"kind":"mentioned","reason":"mentioned","read":false,"text":"Anna mentioned you",
+               "actor":{"id":3,"name":"Anna"},"ticket":{"key":"CT-14","title":"Export"},"epic":null,"project":"CT",
+               "created_at":"2026-09-22 14:05:11","url":"https://x/t/CT-14"}],
+               "meta":{"page":1,"per_page":1,"total":4,"pages":4,"unread":4}}""",
+        )
+
+        val page = api.notifications(connection, unreadOnly = true, perPage = 1)
+
+        assertEquals(4, page.meta.unread)
+        assertEquals("CT-14", page.data.single().ticket!!.key)
+        assertEquals("1", server.takeRequest().url.queryParameter("unread"))
     }
 
     @Test

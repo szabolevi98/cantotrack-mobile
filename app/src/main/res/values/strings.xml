@@ -110,7 +110,7 @@
     <string name="worklog_edit_title">Bejegyzés: %1$s</string>
     <string name="worklog_open_ticket">Ticket</string>
     <string name="worklog_ticket_search">Ticket keresése</string>
-    <string name="worklog_ticket_mine">A rád osztott nyitott ticketek; gépelj a többihez.</string>
+    <string name="worklog_ticket_mine">A csillagozott, nemrég rögzített és folyamatban lévő ticketjeid; gépelj a többihez.</string>
     <string name="worklog_ticket_found">Minden ticket, a lezártak is.</string>
     <string name="worklog_other_ticket">Másik ticket</string>
     <string name="save">Mentés</string>
@@ -136,8 +136,8 @@
     <string name="settings_account">Fiók</string>
     <string name="settings_server">Szerver</string>
     <string name="settings_notifications">Értesítések</string>
-    <string name="settings_notifications_on">Bekapcsolva: a futó óra az értesítések között látszik</string>
-    <string name="settings_notifications_off">Kikapcsolva: a futó óra csak az appban látszik</string>
+    <string name="settings_notifications_on">Bekapcsolva: a futó óra és az újdonságok az értesítések között látszanak</string>
+    <string name="settings_notifications_off">Kikapcsolva: a futó óra és az újdonságok csak az appban látszanak</string>
     <string name="settings_signed_in_here">Ez az eszköz</string>
     <string name="settings_token_explained">A belépés a profilod „Hozzáférési tokenek” listáján App jelzéssel látszik, és ott is visszavonható. Az új jelszó és a „Kijelentkezés mindenhol máshol” ezt az eszközt is kilépteti.</string>
     <string name="settings_sign_out">Kijelentkezés</string>
@@ -147,4 +147,182 @@
     <string name="role_admin">Adminisztrátor</string>
     <string name="role_member">Csapattag</string>
     <string name="role_guest">Vendég</string>
+    <string name="settings_news">Újdonságok a telefonon</string>
+    <string name="settings_news_text">Ha megemlítenek, rád osztanak egy ticketet, vagy változik egy figyelt ticket, negyedóránként megnézi, és szól az értesítések között.</string>
+    <string name="settings_shortcuts">Gyorsan elérhető</string>
+    <string name="settings_shortcuts_text">Az óra kitehető a kezdőképernyőre (widget: hosszan nyomd a kezdőképernyőt), és a lehúzható gyorsbeállítások közé (csempe: a ceruzával szerkeszthető). Az app ikonját hosszan nyomva: idő rögzítése, új ticket, óra.</string>
+
+    <!-- New in 1.3 -->
+    <string name="more">Továbbiak</string>
+    <string name="show_all">Mind a(z) %1$d</string>
+    <string name="show_less">Kevesebb</string>
+    <string name="error_signed_out">Előbb lépj be az appban.</string>
+
+    <string name="tab_board">Tábla</string>
+    <string name="tab_news">Értesítések</string>
+
+    <string name="type_task">Feladat</string>
+    <string name="type_bug">Hiba</string>
+    <string name="type_story">Story</string>
+
+    <string name="link_blocks">blokkolja:</string>
+    <string name="link_blocked_by">erre vár:</string>
+    <string name="link_relates">kapcsolódik:</string>
+    <string name="link_duplicates">duplikátuma ennek:</string>
+    <string name="link_duplicated_by">duplikátuma:</string>
+
+    <string name="person_search">Név keresése</string>
+    <string name="person_me">Én (%1$s)</string>
+
+    <!-- Tickets: the quick filters -->
+    <string name="filter_starred">Csillagozott</string>
+    <string name="filter_recent">Legutóbbi</string>
+    <string name="filter_overdue">Lejárt</string>
+    <string name="filter_due_week">7 napon belül</string>
+    <string name="filter_bugs">Hibák</string>
+    <string name="filter_project">Projekt</string>
+    <string name="filter_every_project">Minden projekt</string>
+    <string name="filter_query">Lekérdezés</string>
+    <string name="filter_clear">Szűrők törlése</string>
+    <string name="tickets_empty_filtered">A szűrőknek egy nyitott ticket sem felel meg.</string>
+    <string name="starred_count">%1$d csillagozott ticket</string>
+    <string name="starred_empty_title">Nincs csillagozott ticket</string>
+    <string name="starred_empty_text">Egy ticketen a csillaggal jelölheted meg: időrögzítéskor ezek jönnek elsőnek.</string>
+    <string name="recent_count">Amiket legutóbb megnyitottál, a weben vagy itt</string>
+    <string name="recent_empty_title">Még nem nyitottál meg ticketet</string>
+    <string name="recent_empty_text">Amit a weben vagy itt megnyitsz, az itt sorakozik.</string>
+    <string name="query_title">Lekérdezés</string>
+    <string name="query_text">Lekérdezés (mint a weben)</string>
+    <string name="query_name">Név, ha megtartod</string>
+    <string name="query_help">Például: project = CT AND priority = high, vagy assignee = none AND type = bug. Névvel elmentve a Lekérdezés alatt marad.</string>
+    <string name="query_save">Mentés</string>
+    <string name="query_apply">Alkalmaz</string>
+    <string name="query_off">Kikapcsolás</string>
+
+    <!-- A new ticket -->
+    <string name="new_ticket">Új ticket</string>
+    <string name="new_ticket_project">Projekt</string>
+    <string name="new_ticket_no_project">Nincs projekt, amibe írhatnál</string>
+    <string name="new_ticket_type">Típus</string>
+    <string name="new_ticket_title">Cím</string>
+    <string name="new_ticket_description">Leírás (nem kötelező)</string>
+    <string name="new_ticket_priority">Prioritás</string>
+    <string name="new_ticket_create">Létrehozás</string>
+    <string name="new_ticket_created">Létrejött: %1$s</string>
+    <string name="new_ticket_files_failed">A ticket létrejött, de %1$d fájl nem ment fel. A ticketen újra megpróbálhatod.</string>
+
+    <!-- A ticket, more of it -->
+    <string name="ticket_star">Csillagozás</string>
+    <string name="ticket_unstar">Csillag levétele</string>
+    <string name="ticket_starred">Csillagozva: időrögzítéskor elsőnek jön.</string>
+    <string name="ticket_unstarred">A csillag lekerült.</string>
+    <string name="ticket_watch">Figyelés</string>
+    <string name="ticket_unwatch">Figyelés vége</string>
+    <string name="ticket_watching">Figyeled: a változásairól értesítést kapsz.</string>
+    <string name="ticket_not_watching">Nem figyeled tovább.</string>
+    <string name="ticket_edit_text">Cím és leírás</string>
+    <string name="ticket_markdown_hint">A leírás Markdown, mint a weben: **félkövér**, - lista, - [ ] teendő.</string>
+    <string name="ticket_saved">Mentve.</string>
+    <string name="ticket_take">Magamra veszem</string>
+    <string name="ticket_taken">Mostantól a tiéd.</string>
+    <string name="ticket_sprint">Sprint</string>
+    <string name="ticket_backlog">Backlog (nincs sprintben)</string>
+    <string name="ticket_parent">Szülő ticket</string>
+    <string name="ticket_subtasks">Részfeladatok (%1$d / %2$d kész)</string>
+    <string name="ticket_links">Kapcsolatok</string>
+    <string name="ticket_hours">Órák rajta: %1$s</string>
+    <string name="ticket_attachments">Csatolmányok (%1$d)</string>
+    <string name="comment_edit">Szerkesztés</string>
+    <string name="comment_edited">szerkesztve</string>
+    <string name="comment_saved">A komment módosult.</string>
+    <string name="comment_deleted">A komment törölve.</string>
+    <string name="comment_delete_title">Törlöd a kommentet?</string>
+
+    <!-- Attachments -->
+    <string name="attachment_add">Fájl hozzáadása</string>
+    <string name="attachment_camera">Fotó</string>
+    <string name="attachment_gallery">Kép</string>
+    <string name="attachment_file">Fájl</string>
+    <string name="attachment_none">Még nincs csatolmány. Fotózd le, amit találtál.</string>
+    <string name="attachment_hint">Koppints a megnyitáshoz, nyomd hosszan a törléshez.</string>
+    <string name="attachment_uploaded">Feltöltve: %1$s</string>
+    <string name="attachment_deleted">A fájl törölve.</string>
+    <string name="attachment_delete_title">Törlöd a fájlt?</string>
+    <string name="attachment_no_app">Nincs app a telefonon, ami ezt megnyitná.</string>
+    <string name="attachment_no_camera">Nincs kamera app a telefonon.</string>
+    <string name="attachment_unreadable">Ezt a fájlt nem sikerült beolvasni.</string>
+
+    <!-- The board -->
+    <string name="board_title">Tábla</string>
+    <string name="board_shared">Közös tábla: %1$s</string>
+    <string name="board_other">Másik</string>
+    <string name="board_pick">Tábla</string>
+    <string name="board_none_title">Nincs látható tábla</string>
+    <string name="board_none_text">Egy projektedhez sincs még tábla, vagy nem vagy tagja egy projektnek sem.</string>
+    <string name="board_no_sprint_title">Nincs futó vagy tervezett sprint</string>
+    <string name="board_no_sprint_text">A sprinteket a weben lehet tervezni és indítani; itt a futó sprint látszik.</string>
+    <string name="board_empty">Ebben a sprintben még nincs ticket.</string>
+    <string name="board_empty_mine">Ebben a sprintben nincs rád osztott ticket.</string>
+    <string name="board_other_column">Egyéb</string>
+    <string name="board_moved">%1$s → %2$s</string>
+    <string name="board_no_such_column">A(z) %1$s projektjének nincs oszlopa itt: %2$s.</string>
+    <string name="sprint_active">Fut</string>
+    <string name="sprint_planned">Tervezett</string>
+    <string name="sprint_days_left">még %1$d nap</string>
+    <string name="sprint_ends_today">ma ér véget</string>
+    <string name="sprint_overdue">lejárt</string>
+    <string name="sprint_tickets_done">%1$d / %2$d ticket kész</string>
+    <string name="sprint_points_done">%1$d / %2$d pont</string>
+
+    <!-- Notifications -->
+    <string name="news_title">Értesítések</string>
+    <string name="news_unread">%1$d olvasatlan</string>
+    <string name="news_all_read">Minden olvasva</string>
+    <string name="news_read_all">Mind olvasott</string>
+    <string name="news_everything">Mind</string>
+    <string name="news_unread_only">Olvasatlan</string>
+    <string name="news_empty_title">Még nincs értesítésed</string>
+    <string name="news_empty_unread_title">Nincs olvasatlan értesítés</string>
+    <string name="news_empty_text">Ide jön, ha megemlítenek, rád osztanak egy ticketet, vagy változik egy figyelt ticket.</string>
+    <string name="news_channel">Újdonságok</string>
+    <string name="news_channel_description">Említések, kiosztások és a figyelt ticketek változásai.</string>
+
+    <!-- The week -->
+    <string name="hours_of_expected">/ %1$s a héten</string>
+    <string name="hours_missing_to_date">A mai napig %1$s hiányzik.</string>
+    <string name="hours_missing_week">A hétből %1$s hiányzik.</string>
+    <string name="hours_day_of">%1$s / %2$s</string>
+    <string name="week_open">A hét még nincs leadva</string>
+    <string name="week_waiting">Leadva, jóváhagyásra vár</string>
+    <string name="week_approved">Jóváhagyva</string>
+    <string name="week_rejected">Visszaküldve</string>
+    <string name="week_reviewed_by">%1$s nézte meg</string>
+    <string name="week_locked_until">%1$s-ig az órák lezárva.</string>
+    <string name="week_submit">Hét leadása</string>
+    <string name="week_submit_title">Leadod a hetet?</string>
+    <string name="week_submit_text">%1$s rögzítve, a hét %2$s órát kér. Leadás után az órák nem változnak, amíg jóvá nem hagyják vagy vissza nem küldik.</string>
+    <string name="week_submitted">A hét leadva.</string>
+    <string name="absence_vacation">Szabadság</string>
+    <string name="absence_sick">Betegség</string>
+    <string name="absence_other">Egyéb távollét</string>
+    <string name="absence_add">Távollét</string>
+    <string name="absence_from">Első nap</string>
+    <string name="absence_to">Utolsó nap</string>
+    <string name="absence_help">Ezek a napok nem kérnek órát, ahogy az ünnepnapok sem.</string>
+    <string name="absence_added">A távollét felkerült.</string>
+    <string name="absence_deleted">A távollét törölve.</string>
+    <string name="absence_delete_title">Törlöd a távollétet?</string>
+
+    <!-- Outside the app: the widget, the tile, the icon's shortcuts -->
+    <string name="widget_name">CantoTrack óra</string>
+    <string name="widget_description">A futó óra, a mai órák és egy gomb, ami leállítja.</string>
+    <string name="widget_signed_out">Nincs bejelentkezve</string>
+    <string name="widget_signed_out_text">Koppints, és lépj be az appban.</string>
+    <string name="widget_not_running">Nem fut az óra</string>
+    <string name="widget_pick_ticket">Indítsd el egy ticketen az appban.</string>
+    <string name="widget_start_on">Indítás: %1$s</string>
+    <string name="tile_label">CantoTrack óra</string>
+    <string name="shortcut_log_time">Idő rögzítése</string>
+    <string name="shortcut_new_ticket">Új ticket</string>
+    <string name="shortcut_clock">Óra</string>
 </resources>

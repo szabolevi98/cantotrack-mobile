@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Only the cache: photos waiting to be sent, and files downloaded to be looked at. -->
+<paths>
+    <cache-path name="photos" path="photos/" />
+    <cache-path name="attachments" path="attachments/" />
+</paths>

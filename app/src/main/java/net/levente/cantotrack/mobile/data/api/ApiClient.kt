@@ -9,6 +9,7 @@ import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
@@ -17,12 +18,16 @@ import kotlinx.serialization.json.put
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.Buffer
+import java.io.File
 import java.io.IOException
+import java.security.MessageDigest
 
 /** Where to send requests, and as whom. */
 data class Connection(val baseUrl: String, val token: String)
@@ -71,36 +76,75 @@ class ApiClient(
      * Tickets, newest change first: the person's own, or everybody's with
      * [mineOnly] off; only the open ones unless [openOnly] is off.
      */
-    suspend fun tickets(connection: Connection, search: String, mineOnly: Boolean, page: Int = 1, openOnly: Boolean = true): Page<Ticket> {
-        val query = buildMap {
-            if (openOnly) put("open", "1")
-            if (mineOnly) put("assignee", "me")
-            if (search.isNotBlank()) put("q", search.trim())
-            put("page", "$page")
-            put("per_page", "50")
-        }
-        return get(connection, "tickets", query, Page.serializer(Ticket.serializer()))
-    }
+    suspend fun tickets(connection: Connection, search: String, mineOnly: Boolean, page: Int = 1, openOnly: Boolean = true): Page<Ticket> =
+        tickets(connection, TicketFilter(search = search, mineOnly = mineOnly, openOnly = openOnly), page)
+
+    suspend fun tickets(connection: Connection, filter: TicketFilter, page: Int = 1, perPage: Int = 50): Page<Ticket> =
+        get(connection, "tickets", filter.toQuery(page, perPage), Page.serializer(Ticket.serializer()))
 
     suspend fun ticket(connection: Connection, key: String): Ticket =
         get(connection, "tickets/$key", emptyMap(), Envelope.serializer(Ticket.serializer())).data
+
+    /** project, title, and whatever else is set: type, description, priority, assignee_id, due_on. */
+    suspend fun createTicket(connection: Connection, fields: JsonObject): Ticket {
+        val request = authorized(connection, "tickets", emptyMap()).post(fields.toBody()).build()
+        return execute(request, Envelope.serializer(Ticket.serializer())).data
+    }
+
+    /**
+     * Changes the [fields] sent and no others. [version] is the one the ticket
+     * was read at: somebody else's change in between answers 409.
+     */
+    suspend fun updateTicket(connection: Connection, key: String, fields: JsonObject, version: Int?): Ticket {
+        val body = JsonObject(if (version == null) fields else fields + ("version" to JsonPrimitive(version)))
+        val request = authorized(connection, "tickets/$key", emptyMap()).patch(body.toBody()).build()
+        return execute(request, Envelope.serializer(Ticket.serializer())).data
+    }
+
+    /** Moves a ticket to the column [status], by its name or its id. */
+    suspend fun changeStatus(connection: Connection, key: String, status: String, version: Int): Ticket =
+        updateTicket(connection, key, buildJsonObject { put("status", status) }, version)
+
+    /** The projects I can see; the archived ones are left out. */
+    suspend fun projects(connection: Connection): List<Project> =
+        get(connection, "projects", emptyMap(), Envelope.serializer(ListSerializer(Project.serializer()))).data
 
     /** The project's columns, for changing a ticket's status. */
     suspend fun project(connection: Connection, code: String): Project =
         get(connection, "projects/$code", emptyMap(), Envelope.serializer(Project.serializer())).data
 
-    /**
-     * Moves a ticket to the column named [status]. [version] is the one the
-     * ticket was read at: somebody else's change in between answers 409.
-     */
-    suspend fun changeStatus(connection: Connection, key: String, status: String, version: Int): Ticket {
-        val body = buildJsonObject {
-            put("status", status)
-            put("version", version)
-        }
-        val request = authorized(connection, "tickets/$key", emptyMap()).patch(body.toBody()).build()
-        return execute(request, Envelope.serializer(Ticket.serializer())).data
+    /** The active people: who a ticket can be given to. */
+    suspend fun users(connection: Connection): List<Person> =
+        get(connection, "users", emptyMap(), Envelope.serializer(ListSerializer(Person.serializer()))).data
+
+    suspend fun star(connection: Connection, key: String, starred: Boolean) {
+        val builder = authorized(connection, "tickets/$key/star", emptyMap())
+        send((if (starred) builder.post(EMPTY_JSON) else builder.delete()).build())
     }
+
+    suspend fun watch(connection: Connection, key: String, watching: Boolean) {
+        val builder = authorized(connection, "tickets/$key/watch", emptyMap())
+        send((if (watching) builder.post(EMPTY_JSON) else builder.delete()).build())
+    }
+
+    /** My starred tickets that are not finished. */
+    suspend fun starred(connection: Connection): List<Ticket> = ticketList(connection, "starred")
+
+    /** The tickets I opened lately, on the web or here. */
+    suspend fun recent(connection: Connection): List<Ticket> = ticketList(connection, "recent")
+
+    /** What to log time on: starred, logged on lately, in progress. */
+    suspend fun suggested(connection: Connection): List<Ticket> = ticketList(connection, "tickets/suggested")
+
+    private suspend fun ticketList(connection: Connection, path: String): List<Ticket> =
+        get(connection, path, emptyMap(), Envelope.serializer(ListSerializer(Ticket.serializer()))).data
+
+    suspend fun links(connection: Connection, key: String): List<TicketLink> =
+        get(connection, "tickets/$key/links", emptyMap(), Envelope.serializer(ListSerializer(TicketLink.serializer()))).data
+
+    // -----------------------------------------------------------------
+    // Comments
+    // -----------------------------------------------------------------
 
     suspend fun comments(connection: Connection, key: String): List<Comment> =
         get(connection, "tickets/$key/comments", emptyMap(), Envelope.serializer(ListSerializer(Comment.serializer()))).data
@@ -112,16 +156,82 @@ class ApiClient(
         return execute(request, Envelope.serializer(Comment.serializer())).data
     }
 
+    /** Corrects a comment of one's own. */
+    suspend fun updateComment(connection: Connection, id: Int, text: String): Comment {
+        val request = authorized(connection, "comments/$id", emptyMap())
+            .patch(buildJsonObject { put("body", text) }.toBody())
+            .build()
+        return execute(request, Envelope.serializer(Comment.serializer())).data
+    }
+
+    suspend fun deleteComment(connection: Connection, id: Int) {
+        send(authorized(connection, "comments/$id", emptyMap()).delete().build())
+    }
+
+    // -----------------------------------------------------------------
+    // Attachments
+    // -----------------------------------------------------------------
+
+    suspend fun attachments(connection: Connection, key: String): List<Attachment> =
+        get(connection, "tickets/$key/attachments", emptyMap(), Envelope.serializer(ListSerializer(Attachment.serializer()))).data
+
+    /**
+     * One file onto a ticket. The multipart boundary comes from the content,
+     * so the same file sent again after a lost answer is the same request —
+     * and goes with the same Idempotency-Key.
+     */
+    suspend fun upload(connection: Connection, key: String, name: String, type: String, bytes: ByteArray): Uploaded {
+        val boundary = "ct-" + MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }.take(40)
+        val body = MultipartBody.Builder(boundary)
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("file", name, bytes.toRequestBody(type.toMediaTypeOrNull()))
+            .build()
+        return execute(authorized(connection, "tickets/$key/attachments", emptyMap()).post(body).build(), Uploaded.serializer())
+    }
+
+    /** The file itself, written to [target]. */
+    suspend fun download(connection: Connection, id: Int, target: File): Unit = withContext(Dispatchers.IO) {
+        val request = authorized(connection, "attachments/$id", emptyMap()).get().build()
+        val response = try {
+            http.newCall(request).execute()
+        } catch (e: IOException) {
+            throw ApiException.Network(e)
+        }
+        response.use {
+            if (!it.isSuccessful) {
+                val error = parseError(it.body.string()) ?: throw ApiException.BadResponse("HTTP ${it.code}")
+                if (it.code == 401) throw ApiException.Unauthorized(error.second)
+                throw ApiException.Http(it.code, error.second, error.third)
+            }
+            val partial = File(target.path + ".part")
+            try {
+                partial.outputStream().use { out -> it.body.byteStream().copyTo(out) }
+            } catch (e: IOException) {
+                partial.delete()
+                throw ApiException.Network(e)
+            }
+            if (!partial.renameTo(target)) {
+                partial.delete()
+                throw ApiException.Network(IOException("could not keep the file"))
+            }
+        }
+    }
+
+    suspend fun deleteAttachment(connection: Connection, id: Int) {
+        send(authorized(connection, "attachments/$id", emptyMap()).delete().build())
+    }
+
     // -----------------------------------------------------------------
     // Hours
     // -----------------------------------------------------------------
 
-    /** [time] as the web takes it: "1h 30m". [date] is 2026-09-22. */
-    suspend fun logWork(connection: Connection, key: String, time: String, date: String, note: String): Worklog {
+    /** [time] as the web takes it: "1h 30m". [date] is 2026-09-22. [workType] by its name, or none. */
+    suspend fun logWork(connection: Connection, key: String, time: String, date: String, note: String, workType: String? = null): Worklog {
         val body = buildJsonObject {
             put("time", time)
             put("date", date)
             if (note.isNotBlank()) put("note", note.trim())
+            if (!workType.isNullOrBlank()) put("work_type", workType)
         }
         val request = authorized(connection, "tickets/$key/worklogs", emptyMap()).post(body.toBody()).build()
         return execute(request, Envelope.serializer(Worklog.serializer())).data
@@ -131,12 +241,20 @@ class ApiClient(
     suspend fun worklogs(connection: Connection, from: String, to: String): List<Worklog> =
         get(connection, "worklogs", mapOf("from" to from, "to" to to), Envelope.serializer(ListSerializer(Worklog.serializer()))).data
 
-    /** Changes an entry of one's own; the start, billing and work type stay as they were. */
-    suspend fun updateWorklog(connection: Connection, id: Int, time: String, date: String, note: String): Worklog {
+    /** A ticket's hours, everybody's, the newest day first. */
+    suspend fun ticketWorklogs(connection: Connection, key: String): List<Worklog> =
+        get(connection, "tickets/$key/worklogs", emptyMap(), Envelope.serializer(ListSerializer(Worklog.serializer()))).data
+
+    /**
+     * Changes an entry of one's own; the start and billing stay as they were,
+     * and so does the work type unless [workType] is given.
+     */
+    suspend fun updateWorklog(connection: Connection, id: Int, time: String, date: String, note: String, workType: String? = null): Worklog {
         val body = buildJsonObject {
             put("time", time)
             put("date", date)
             put("note", note.trim())
+            if (!workType.isNullOrBlank()) put("work_type", workType)
         }
         val request = authorized(connection, "worklogs/$id", emptyMap()).patch(body.toBody()).build()
         return execute(request, Envelope.serializer(Worklog.serializer())).data
@@ -144,6 +262,68 @@ class ApiClient(
 
     suspend fun deleteWorklog(connection: Connection, id: Int) {
         send(authorized(connection, "worklogs/$id", emptyMap()).delete().build())
+    }
+
+    /** What hours can be logged as. */
+    suspend fun workTypes(connection: Connection): List<WorkType> =
+        get(connection, "work-types", emptyMap(), Envelope.serializer(ListSerializer(WorkType.serializer()))).data
+
+    /** The week [day] is in, against what each of its days asks for. */
+    suspend fun week(connection: Connection, day: String): Week =
+        get(connection, "week", mapOf("week" to day), Envelope.serializer(Week.serializer())).data
+
+    /** Hands the week [day] is in over for approval. */
+    suspend fun submitWeek(connection: Connection, day: String): Week {
+        val request = authorized(connection, "week/submit", emptyMap()).post(buildJsonObject { put("week", day) }.toBody()).build()
+        return execute(request, Envelope.serializer(Week.serializer())).data
+    }
+
+    /** Days away: [kind] is vacation, sick or other. */
+    suspend fun addAbsence(connection: Connection, from: String, to: String, kind: String, note: String): Absence {
+        val body = buildJsonObject {
+            put("starts_on", from)
+            put("ends_on", to)
+            put("kind", kind)
+            if (note.isNotBlank()) put("note", note.trim())
+        }
+        val request = authorized(connection, "absences", emptyMap()).post(body.toBody()).build()
+        return execute(request, Envelope.serializer(Absence.serializer())).data
+    }
+
+    suspend fun deleteAbsence(connection: Connection, id: Int) {
+        send(authorized(connection, "absences/$id", emptyMap()).delete().build())
+    }
+
+    // -----------------------------------------------------------------
+    // Planning
+    // -----------------------------------------------------------------
+
+    suspend fun boards(connection: Connection): List<Board> =
+        get(connection, "boards", emptyMap(), Envelope.serializer(ListSerializer(Board.serializer()))).data
+
+    /** One board, with its columns and its sprints, the running one first. */
+    suspend fun board(connection: Connection, id: Int): BoardDetail =
+        get(connection, "boards/$id", emptyMap(), Envelope.serializer(BoardDetail.serializer())).data
+
+    // -----------------------------------------------------------------
+    // Notifications
+    // -----------------------------------------------------------------
+
+    suspend fun notifications(connection: Connection, page: Int = 1, unreadOnly: Boolean = false, perPage: Int = 30): NotificationPage {
+        val query = buildMap {
+            if (unreadOnly) put("unread", "1")
+            put("page", "$page")
+            put("per_page", "$perPage")
+        }
+        return get(connection, "notifications", query, NotificationPage.serializer())
+    }
+
+    suspend fun readNotification(connection: Connection, id: Int) {
+        send(authorized(connection, "notifications/$id/read", emptyMap()).post(EMPTY_JSON).build())
+    }
+
+    suspend fun readAllNotifications(connection: Connection) {
+        send(authorized(connection, "notifications/read", emptyMap()).post(EMPTY_JSON).build())
     }
 
     // -----------------------------------------------------------------

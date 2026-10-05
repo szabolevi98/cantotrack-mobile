@@ -55,6 +55,7 @@ import kotlinx.coroutines.delay
 import net.levente.cantotrack.mobile.R
 import net.levente.cantotrack.mobile.data.api.ApiException
 import net.levente.cantotrack.mobile.data.api.Ticket
+import net.levente.cantotrack.mobile.data.api.WorkType
 import net.levente.cantotrack.mobile.ui.minutesText
 import net.levente.cantotrack.mobile.ui.theme.CtTheme
 import java.time.Instant
@@ -77,18 +78,22 @@ fun WorklogDialog(
     title: String,
     confirmLabel: String,
     busy: Boolean,
-    onConfirm: (minutes: Int, date: String, note: String) -> Unit,
+    onConfirm: (minutes: Int, date: String, note: String, workType: String?) -> Unit,
     onDismiss: () -> Unit,
     initialMinutes: Int = 30,
     initialDate: LocalDate = LocalDate.now(),
     initialNote: String = "",
     canConfirm: Boolean = true,
+    /** What the hours can be logged as; with none, the choice is not offered. */
+    workTypes: List<WorkType> = emptyList(),
+    initialWorkType: String? = null,
     header: (@Composable ColumnScope.() -> Unit)? = null,
     extra: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     var minutes by rememberSaveable { mutableIntStateOf(initialMinutes) }
     var date by rememberSaveable { mutableStateOf(initialDate.toString()) }
     var note by rememberSaveable { mutableStateOf(initialNote) }
+    var workType by rememberSaveable { mutableStateOf(initialWorkType) }
     var picking by rememberSaveable { mutableStateOf(false) }
     val day = LocalDate.parse(date)
     val today = LocalDate.now()
@@ -142,6 +147,17 @@ fun WorklogDialog(
                         },
                     )
                 }
+                if (workTypes.isNotEmpty()) {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        workTypes.forEach { type ->
+                            FilterChip(
+                                selected = workType == type.name,
+                                onClick = { workType = if (workType == type.name) null else type.name },
+                                label = { Text(type.name) },
+                            )
+                        }
+                    }
+                }
                 OutlinedTextField(
                     value = note,
                     onValueChange = { note = it.take(500) },
@@ -152,7 +168,7 @@ fun WorklogDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = { onConfirm(minutes, date, note) }, enabled = !busy && canConfirm) {
+            TextButton(onClick = { onConfirm(minutes, date, note, workType) }, enabled = !busy && canConfirm) {
                 if (busy) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp) else Text(confirmLabel)
             }
         },
