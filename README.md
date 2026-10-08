@@ -194,6 +194,11 @@ error messages come in the language set on your CantoTrack profile.
    `tracker.example.com`), your email address and your password — and, with
    two-step sign-in on, the code from your authenticator app.
 
+From 1.4.0 the APK is signed with a new key, since the old one was lost.
+Android installs an update only with the same key, so going from 1.3.0 or
+earlier to 1.4.0 takes uninstalling the old version first, and signing in
+again. Later updates install over 1.4.0 as before.
+
 It needs **Android 8.0 (API 26)** or later, and a CantoTrack server with the
 app's endpoints (`/api/v1/auth/login`, `/api/v1/auth/logout`, `/api/v1/timer`) —
 any version from 26 September 2026 on, with `php database/migrate.php` run.
